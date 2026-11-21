@@ -16,10 +16,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.1.1",
     "@tsconfig/node26": "^26.0.2",
     "@types/node": "^26.6.6",
     "eslint": "^10.15.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
     "globals": "^17.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.1",
@@ -33,5 +35,9 @@
       "prettier --write"
     ],
     "*.{json,md,yml}": "prettier --write"
+  },
+  "dependencies": {
+    "commander": "^15.1.0",
+    "csv-parse": "^7.0.3"
   }
 }
