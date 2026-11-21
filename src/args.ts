@@ -1,6 +1,6 @@
 import { Command, InvalidArgumentError } from 'commander';
-import fs from 'node:fs';
 
+// TODO: Deduplicate this
 function parseYear(value: string): number {
   if (!/^\d+$/.test(value)) {
     throw new InvalidArgumentError('Year must be a non-negative integer');
@@ -23,9 +23,6 @@ export function parseArgs(): {
   const [csvFilePath] = program.args;
   if (!csvFilePath) {
     program.help({ error: true });
-  }
-  if (!fs.existsSync(csvFilePath) || !fs.statSync(csvFilePath).isFile()) {
-    program.error(`CSV file does not exist: ${csvFilePath}`);
   }
 
   const { year, out } = program.opts<{

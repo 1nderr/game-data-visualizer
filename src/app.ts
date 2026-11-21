@@ -1,8 +1,15 @@
 import { parseArgs } from './args.js';
+import { parseCsv } from './csv.js';
 
 function main(): void {
-  const { csvFilePath, year, outputFilePath } = parseArgs();
-  console.log(csvFilePath, year, outputFilePath);
+  try {
+    const { csvFilePath, year, outputFilePath } = parseArgs();
+    parseCsv(csvFilePath);
+    console.log(year, outputFilePath);
+  } catch (e: unknown) {
+    console.error(e instanceof Error ? e.message : String(e));
+    process.exitCode = 1;
+  }
 }
 
 main();
