@@ -1,6 +1,5 @@
 import { Command, InvalidArgumentError } from 'commander';
 
-// TODO: Deduplicate this
 function parseYear(value: string): number {
   if (!/^\d+$/.test(value)) {
     throw new InvalidArgumentError('Year must be a non-negative integer');
