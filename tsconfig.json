@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node26/tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "rootDir": "src/",
+    "outDir": "dist/"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
