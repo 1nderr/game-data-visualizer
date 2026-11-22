@@ -1,1 +1,1 @@
-# game-data-visualizer
+# data-visualizer

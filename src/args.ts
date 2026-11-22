@@ -8,19 +8,19 @@ function parseYear(value: string): number {
 }
 
 export function parseArgs(): {
-  csvFilePath: string;
+  filePath: string;
   year?: number;
   outputFilePath?: string;
 } {
   const program = new Command()
-    .description('A visualization tool for my games.csv data')
-    .argument('[csvFilePath]', 'game data csv filepath')
+    .description('A visualization tool for data')
+    .argument('[filePath]', 'data filepath (csv)')
     .option('-y, --year <number>', 'year to filter the data on', parseYear)
     .option('-o, --out <path>', 'output filepath')
     .parse();
 
-  const [csvFilePath] = program.args;
-  if (!csvFilePath) {
+  const [filePath] = program.args;
+  if (!filePath) {
     program.help({ error: true });
   }
 
@@ -29,5 +29,5 @@ export function parseArgs(): {
     out?: string;
   }>();
 
-  return { csvFilePath, year, outputFilePath: out };
+  return { filePath: filePath, year, outputFilePath: out };
 }
