@@ -23,7 +23,7 @@ const SYSTEMS = [
 ] as const;
 const PURCHASE_METHODS = ['bought', 'neither', 'free'] as const;
 
-export const GameSchema = z.object({
+export const Schema = z.object({
   title: z.string().toLowerCase(),
   genre: z.string().toLowerCase(),
   system: z.string().toLowerCase().pipe(z.enum(SYSTEMS)),
@@ -32,4 +32,4 @@ export const GameSchema = z.object({
   yearPlayed: z.coerce.number().int().min(1970).max(2200),
 });
 
-export type Game = z.infer<typeof GameSchema>;
+export type Game = z.infer<typeof Schema>;

@@ -1,7 +1,7 @@
 {
-  "name": "data-visualizer",
+  "name": "game-data-visualizer",
   "version": "1.0.0",
-  "description": "A visualization tool for data",
+  "description": "A visualization tool for my games.csv data",
   "license": "ISC",
   "author": "1nder",
   "type": "module",
