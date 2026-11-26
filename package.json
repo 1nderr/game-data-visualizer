@@ -15,8 +15,12 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@fontsource/inconsolata": "^5.3.0",
+    "canvas": "^3.2.3",
     "commander": "^15.1.0",
     "csv-parse": "^7.0.3",
+    "vega": "^6.4.0",
+    "vega-lite": "^6.5.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
