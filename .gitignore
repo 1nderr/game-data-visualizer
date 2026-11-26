@@ -138,3 +138,7 @@ dist
 stats.py
 *.csv
 index.html
+out.svg
+out.png
+cover_cache/
+

@@ -17,7 +17,7 @@ registerFont(
 );
 
 const PADDING = 5;
-const MAX_BAR_LABEL_WIDTH = 100;
+const MAX_BAR_LABEL_WIDTH = 6;
 
 function getBarSpec(field: keyof Game, title: string): FacetedUnitSpec<Field> {
   return {
