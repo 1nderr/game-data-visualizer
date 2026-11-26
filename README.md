@@ -1,8 +1,6 @@
-# Game Data Visualizer
+# Media Wrapped
 
-A small CLI that turns a CSV of the games I've played into an image. For a given year it shows the game covers from [IGDB](https://www.igdb.com/) next to charts of genres and systems. Without a year it shows all-time charts.
-
-![Screenshot of the 2023 output showing a grid of game covers next to genre and system bar charts](docs/screenshot.png)
+Turns logs of the media I've consumed into a yearly recap image: the covers next to a few charts.
 
 ## Setup
 
@@ -10,17 +8,26 @@ A small CLI that turns a CSV of the games I've played into an image. For a given
 npm install
 ```
 
-Add IGDB credentials to a `.env` file:
+## Games
+
+![Screenshot of the 2023 games recap showing a grid of game covers next to genre and system bar charts](docs/screenshot.png)
+
+Covers come from [IGDB](https://www.igdb.com/). Add IGDB credentials to a `.env` file:
 
 ```sh
 IGDB_CLIENT_ID=...
 IGDB_CLIENT_SECRET=...
 ```
 
-## Usage
+The CSV needs these columns, where `id` is the game's IGDB id:
+
+```csv
+id,title,genre,system,purchaseMethod,completed,yearPlayed
+27238,am2r: return of samus,metroidvania,pc,free,true,2019
+```
 
 ```sh
-npm start -- games.csv --year 2023
+npm run games -- path/to/games.csv --year 2023
 ```
 
 The image is written to `out.png`.

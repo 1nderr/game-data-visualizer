@@ -1,7 +1,7 @@
 {
-  "name": "game-data-visualizer",
+  "name": "media-wrapped",
   "version": "1.0.0",
-  "description": "A visualization tool for my games.csv data",
+  "description": "Yearly recap images of the media I have finished",
   "license": "ISC",
   "author": "1nder",
   "type": "module",
@@ -11,7 +11,7 @@
     "clean": "rm -rf dist/",
     "lint": "eslint --fix --max-warnings 0",
     "format": "prettier --write .",
-    "start": "npm run build && node --env-file=.env ./dist/app.js",
+    "games": "npm run build && node --env-file=.env ./dist/games/app.js",
     "prepare": "husky"
   },
   "dependencies": {

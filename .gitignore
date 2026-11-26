@@ -138,7 +138,6 @@ dist
 stats.py
 *.csv
 index.html
-out.svg
-out.png
+games.png
 cover_cache/
 
