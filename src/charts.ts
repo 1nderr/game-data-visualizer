@@ -4,9 +4,10 @@ import type { Field } from 'vega-lite/types_unstable/channeldef.js';
 import { Game } from './schema.js';
 import { loader, parse, View } from 'vega';
 import { createRequire } from 'node:module';
-import { registerFont } from 'canvas';
+import { Canvas, registerFont } from 'canvas';
 
 const PADDING = 5;
+const SCALE_FACTOR = 3;
 
 const CHART_WIDTH = 300;
 const CHART_HEIGHT = 200;
@@ -167,7 +168,7 @@ export async function generateCharts(
   games: Game[],
   year: number | undefined,
   coverPaths: string[]
-): Promise<string> {
+): Promise<Buffer> {
   let spec = getSpec(games, year, ALL_TIME_CHART_HEIGHT);
 
   if (year) {
@@ -193,5 +194,6 @@ export async function generateCharts(
     renderer: 'none',
     loader: loader({ mode: 'file' }),
   });
-  return view.toSVG();
+  const canvas = (await view.toCanvas(SCALE_FACTOR)) as unknown as Canvas;
+  return canvas.toBuffer('image/png');
 }

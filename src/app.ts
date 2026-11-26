@@ -18,8 +18,8 @@ try {
 
   const coverPaths = year ? await downloadCovers(games) : [];
 
-  const chartsSvg = await generateCharts(games, year, coverPaths);
-  writeFileSync('out.svg', chartsSvg, 'utf-8');
+  const png = await generateCharts(games, year, coverPaths);
+  writeFileSync('out.png', png);
 } catch (e: unknown) {
   console.error(e instanceof Error ? e.message : String(e));
   process.exitCode = 1;
