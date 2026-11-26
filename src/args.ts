@@ -1,10 +1,18 @@
-import { Command } from 'commander';
+import { Command, InvalidArgumentError } from 'commander';
 
-export function parseArgs(): { filePath: string } {
+function parseYear(value: string): number {
+  if (!/^\d+$/.test(value)) {
+    throw new InvalidArgumentError('Year must be a non-negative integer');
+  }
+  return Number(value);
+}
+
+export function parseArgs(): { filePath: string; year?: number } {
   const program = new Command()
     .name('game-data-visualizer')
     .description('A visualization tool for my games.csv data')
     .argument('[filePath]', 'game data csv filepath')
+    .option('-y, --year <number>', 'year to filter the data on', parseYear)
     .parse();
 
   const [filePath] = program.args;
@@ -12,5 +20,9 @@ export function parseArgs(): { filePath: string } {
     program.help({ error: true });
   }
 
-  return { filePath };
+  const { year } = program.opts<{
+    year?: number;
+  }>();
+
+  return { filePath, year };
 }
