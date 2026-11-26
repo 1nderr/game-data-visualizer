@@ -17,9 +17,8 @@ try {
   }
 
   const coverPaths = year ? await downloadCovers(games) : [];
-  console.log(coverPaths);
 
-  const chartsSvg = await generateCharts(games, year);
+  const chartsSvg = await generateCharts(games, year, coverPaths);
   writeFileSync('out.svg', chartsSvg, 'utf-8');
 } catch (e: unknown) {
   console.error(e instanceof Error ? e.message : String(e));

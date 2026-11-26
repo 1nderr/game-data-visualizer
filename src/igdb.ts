@@ -51,9 +51,13 @@ async function getGames(games: Game[], token: string): Promise<IgdbGame[]> {
 }
 
 async function downloadCover(imageId: string): Promise<Buffer> {
-  const res = await fetch(`${IGDB_IMAGE_URL}/${imageId}.jpg`);
-  if (!res.ok) throw Error(`Cover download failed: ${res.status}`);
-  return Buffer.from(await res.arrayBuffer());
+  const response = await fetch(`${IGDB_IMAGE_URL}/${imageId}.jpg`);
+
+  if (response.ok) {
+    return Buffer.from(await response.arrayBuffer());
+  } else {
+    throw new Error(`Cover download failed: ${response.status}`);
+  }
 }
 
 function coverPath(id: number): string {
