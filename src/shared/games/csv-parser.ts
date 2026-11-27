@@ -1,5 +1,5 @@
 import { parse } from 'csv-parse/sync';
-import fs from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'fs';
 import z, { ZodObject } from 'zod';
 
 type CsvRow = { record: Record<string, string>; info: { lines: number } };
@@ -40,15 +40,15 @@ export function parseCsv<T extends ZodObject>(
   filePath: string,
   schema: T
 ): z.output<T>[] {
-  if (!fs.existsSync(filePath)) {
+  if (!existsSync(filePath)) {
     throw Error(`File does not exist: ${filePath}`);
   }
 
-  if (!fs.statSync(filePath).isFile()) {
+  if (!statSync(filePath).isFile()) {
     throw Error(`Not a file: ${filePath}`);
   }
 
-  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const fileContent = readFileSync(filePath, 'utf-8');
   const rows = parse(fileContent, {
     columns: (headers: string[]) => {
       validateHeaders(headers, schema);

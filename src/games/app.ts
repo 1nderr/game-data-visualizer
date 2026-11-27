@@ -1,7 +1,7 @@
 import { exit } from 'node:process';
 import { parseArgs } from '../shared/args.js';
 import { generateCharts } from './charts.js';
-import { parseCsv } from '../shared/csv-parser.js';
+import { parseCsv } from '../shared/games/csv-parser.js';
 import { downloadCovers } from './igdb.js';
 import { Schema } from './schema.js';
 import { writeFileSync } from 'node:fs';

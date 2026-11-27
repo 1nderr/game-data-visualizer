@@ -10,8 +10,8 @@ function parseYear(value: string): number {
 export function parseArgs(): { filePath: string; year?: number } {
   const program = new Command()
     .name('media-wrapped')
-    .description('A visualization tool for data')
-    .argument('[filePath]', 'data filepath (csv)')
+    .description('Yearly recap images of the media I have finished')
+    .argument('[filePath]', 'data filepath')
     .option('-y, --year <number>', 'year to filter the data on', parseYear)
     .parse();
 
