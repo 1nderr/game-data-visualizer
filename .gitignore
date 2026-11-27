@@ -139,5 +139,6 @@ stats.py
 *.csv
 index.html
 games.png
+books.png
 cover_cache/
 

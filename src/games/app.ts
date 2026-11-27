@@ -3,7 +3,7 @@ import { parseArgs } from '../shared/args.js';
 import { generateCharts } from './charts.js';
 import { getChartsColumnWidth, renderRecap } from '../shared/recap.js';
 import { getCoverGrid } from '../shared/cover-grid.js';
-import { parseCsv } from '../shared/games/csv-parser.js';
+import { parseCsv } from './csv.js';
 import { downloadCovers } from './igdb.js';
 import { Schema } from './schema.js';
 import { writeFileSync } from 'node:fs';
