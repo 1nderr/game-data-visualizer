@@ -1,109 +1,95 @@
-import { TopLevelSpec } from 'vega-lite';
 import type { FacetedUnitSpec } from 'vega-lite/types_unstable/spec/index.js';
 import type { Field } from 'vega-lite/types_unstable/channeldef.js';
-import { getBestCoverLayout, getCoverGridSpec } from '../shared/cover-grid.js';
-import { AXIS_LABEL_FONT_SIZE, renderPng } from '../shared/render.js';
-import { Book } from './types.js';
+import { CHART_WIDTH, Charts, getBarSpec } from '../shared/recap.js';
+import { Book } from './db.js';
 
-const PADDING = 5;
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
-const CHART_WIDTH = 300;
-const CHART_HEIGHT = 200;
-const ALL_TIME_CHART_HEIGHT = 500;
-const CHARTS_OVERHEAD = 80;
+function getPagesPerPeriod(
+  books: Book[],
+  year: number | undefined
+): { period: string; pages: number }[] {
+  const periodOf = (d: Date) =>
+    year ? MONTHS[d.getUTCMonth()] : String(d.getUTCFullYear());
+  const dated = books.filter((b) => b.finishedDate !== null);
+  const periods = year
+    ? MONTHS
+    : [...new Set(dated.map((b) => periodOf(b.finishedDate as Date)))].sort();
 
-const SUBTITLE_FONT_SIZE = 16;
-const AXIS_TICK_AND_PADDING = 5 + 2;
-
-function getChartsColumnWidth(books: Book[]): number {
-  const maxLabelLength = Math.max(
-    ...books.flatMap((b) => b.tags.map((t) => t.length))
-  );
-  return (
-    CHART_WIDTH +
-    (maxLabelLength * AXIS_LABEL_FONT_SIZE) / 2 +
-    AXIS_TICK_AND_PADDING
-  );
+  return periods.map((period) => ({
+    period,
+    pages: dated
+      .filter((b) => periodOf(b.finishedDate as Date) === period)
+      .reduce((sum, b) => sum + (b.pages ?? 0), 0),
+  }));
 }
 
-function getBarSpec(
-  field: keyof Book,
+function getPagesSpec(
+  values: { period: string; pages: number }[],
   title: string,
   height: number,
   color: string
 ): FacetedUnitSpec<Field> {
   return {
     title,
+    data: { values },
     mark: { type: 'bar', color },
     width: CHART_WIDTH,
     height,
     encoding: {
       x: {
-        aggregate: 'count',
-        type: 'quantitative',
+        field: 'period',
+        type: 'ordinal',
+        sort: null,
         title: '',
-        axis: { tickMinStep: 1, format: 'd' },
+        axis: { labelAngle: 0 },
       },
       y: {
-        field,
-        type: 'nominal',
-        sort: '-x',
+        field: 'pages',
+        type: 'quantitative',
         title: '',
+        axis: { format: ',d' },
       },
     },
   };
 }
 
-function getSpec(
-  books: Book[],
-  year: number | undefined,
-  chartHeight: number,
-  coverGrid?: FacetedUnitSpec<Field>
-): TopLevelSpec {
-  const completionRate =
-    (books.filter((b) => b.status === 'finished').length / books.length) * 100;
-
-  const charts = [getBarSpec('tags', 'Genres', chartHeight, 'mediumpurple')];
-
-  return {
-    title: {
-      text: `${year ?? 'All-Time'} Books`,
-      subtitle: `${books.length} books • ${Math.round(completionRate)}% finished`,
-      anchor: 'middle',
-      fontSize: 20,
-      subtitleFontSize: SUBTITLE_FONT_SIZE,
-    },
-    padding: PADDING,
-    data: {
-      values: books,
-    },
-    hconcat: coverGrid ? [coverGrid, { vconcat: charts }] : charts,
-  };
-}
-
-export async function generateCharts(
+export function generateCharts(
   books: Book[],
   year: number | undefined
-): Promise<Buffer> {
-  let spec = getSpec(books, year, ALL_TIME_CHART_HEIGHT);
+): Charts {
+  const completionRate =
+    (books.filter((b) => b.status === 'finished').length / books.length) * 100;
+  const totalPages = books.reduce((sum, b) => sum + (b.pages ?? 0), 0);
 
-  if (year) {
-    const layout = getBestCoverLayout(
-      books.length,
-      getChartsColumnWidth(books),
-      CHART_HEIGHT * 2 + CHARTS_OVERHEAD
-    );
-    const chartHeight = (layout.gridHeight - CHARTS_OVERHEAD) / 2;
-    spec = getSpec(
-      books,
-      year,
-      chartHeight,
-      getCoverGridSpec(
-        books.map((b) => b.coverPath).filter((c) => c !== null),
-        layout
-      )
-    );
-  }
-
-  return renderPng(spec);
+  return {
+    title: `${year ?? 'All-Time'} Books`,
+    subtitle: `${books.length} books • ${totalPages.toLocaleString('en-US')} pages • ${Math.round(completionRate)}% finished`,
+    data: books,
+    maxLabelLength: Math.max(
+      ...books.flatMap((b) => b.tags.map((t) => t.length))
+    ),
+    charts: (height) => [
+      getPagesSpec(
+        getPagesPerPeriod(books, year),
+        year ? 'Pages per Month' : 'Pages per Year',
+        height,
+        'coral'
+      ),
+      getBarSpec('tags', 'Genres', height, 'cadetblue', true),
+    ],
+  };
 }

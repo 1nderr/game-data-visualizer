@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3';
 import { existsSync, statSync } from 'fs';
-import { Book, Status } from './types.js';
 import { dirname, join } from 'path';
 
 const QUERY = `
@@ -21,6 +20,8 @@ const QUERY = `
     LEFT JOIN custom_column_6 AS status ON status.id = status_link.value
 `;
 
+type Status = 'backlog' | 'dnf' | 'finished' | 'in-progress';
+
 interface BookRow {
   id: number;
   title: string;
@@ -30,6 +31,16 @@ interface BookRow {
   status: string | null;
   path: string;
   has_cover: 0 | 1;
+}
+
+export interface Book {
+  id: number;
+  title: string;
+  tags: string[];
+  pages: number | null;
+  finishedDate: Date | null;
+  status: Status;
+  coverPath: string | null;
 }
 
 function toBook(row: BookRow, library: string): Book {

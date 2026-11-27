@@ -1,10 +1,11 @@
 import type { FacetedUnitSpec } from 'vega-lite/types_unstable/spec/index.js';
 import type { Field } from 'vega-lite/types_unstable/channeldef.js';
+import { CHARTS_TARGET_HEIGHT } from './recap.js';
 
 const COVER_ASPECT = 4 / 3;
 const COVER_GAP = 6;
 
-export interface CoverLayout {
+interface CoverLayout {
   columns: number;
   coverWidth: number;
   coverHeight: number;
@@ -27,7 +28,7 @@ function getCoverLayout(
   };
 }
 
-export function getBestCoverLayout(
+function getBestCoverLayout(
   count: number,
   width: number,
   targetHeight: number
@@ -45,7 +46,7 @@ export function getBestCoverLayout(
   return best;
 }
 
-export function getCoverGridSpec(
+function getCoverGridSpec(
   coverPaths: string[],
   { columns, coverWidth, coverHeight }: CoverLayout
 ): FacetedUnitSpec<Field> {
@@ -66,5 +67,23 @@ export function getCoverGridSpec(
       y: { field: 'row', type: 'ordinal', axis: null },
       url: { field: 'url', type: 'nominal' },
     },
+  };
+}
+
+export function getCoverGrid(
+  coverPaths: string[],
+  width: number
+): { spec: FacetedUnitSpec<Field>; height: number } | undefined {
+  if (coverPaths.length === 0) {
+    return undefined;
+  }
+  const layout = getBestCoverLayout(
+    coverPaths.length,
+    width,
+    CHARTS_TARGET_HEIGHT
+  );
+  return {
+    spec: getCoverGridSpec(coverPaths, layout),
+    height: layout.gridHeight,
   };
 }

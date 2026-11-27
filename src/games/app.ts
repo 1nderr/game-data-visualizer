@@ -1,6 +1,8 @@
 import { exit } from 'node:process';
 import { parseArgs } from '../shared/args.js';
 import { generateCharts } from './charts.js';
+import { getChartsColumnWidth, renderRecap } from '../shared/recap.js';
+import { getCoverGrid } from '../shared/cover-grid.js';
 import { parseCsv } from '../shared/games/csv-parser.js';
 import { downloadCovers } from './igdb.js';
 import { Schema } from './schema.js';
@@ -17,8 +19,10 @@ try {
   }
 
   const coverPaths = year ? await downloadCovers(games) : [];
+  const charts = generateCharts(games, year);
+  const coverGrid = getCoverGrid(coverPaths, getChartsColumnWidth(charts));
 
-  const png = await generateCharts(games, year, coverPaths);
+  const png = await renderRecap(charts, coverGrid);
   writeFileSync('games.png', png);
 } catch (e: unknown) {
   console.error(e instanceof Error ? e.message : String(e));
