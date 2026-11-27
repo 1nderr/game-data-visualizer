@@ -9,7 +9,7 @@ const PADDING = 5;
 
 const CHART_WIDTH = 300;
 const CHART_HEIGHT = 200;
-// const ALL_TIME_CHART_HEIGHT = 500;
+const ALL_TIME_CHART_HEIGHT = 500;
 const CHARTS_OVERHEAD = 80;
 
 const SUBTITLE_FONT_SIZE = 16;
@@ -26,41 +26,45 @@ function getChartsColumnWidth(books: Book[]): number {
   );
 }
 
-// function getBarSpec(
-//   field: keyof Book,
-//   title: string,
-//   height: number,
-//   color: string
-// ): FacetedUnitSpec<Field> {
-//   return {
-//     title,
-//     mark: { type: 'bar', color },
-//     width: CHART_WIDTH,
-//     height,
-//     encoding: {
-//       x: {
-//         aggregate: 'count',
-//         type: 'quantitative',
-//         title: '',
-//         axis: { tickMinStep: 1, format: 'd' },
-//       },
-//       y: {
-//         field,
-//         type: 'nominal',
-//         sort: '-x',
-//         title: '',
-//       },
-//     },
-//   };
-// }
+function getBarSpec(
+  field: keyof Book,
+  title: string,
+  height: number,
+  color: string
+): FacetedUnitSpec<Field> {
+  return {
+    title,
+    mark: { type: 'bar', color },
+    width: CHART_WIDTH,
+    height,
+    encoding: {
+      x: {
+        aggregate: 'count',
+        type: 'quantitative',
+        title: '',
+        axis: { tickMinStep: 1, format: 'd' },
+      },
+      y: {
+        field,
+        type: 'nominal',
+        sort: '-x',
+        title: '',
+      },
+    },
+  };
+}
 
 function getSpec(
   books: Book[],
   year: number | undefined,
+  chartHeight: number,
   coverGrid?: FacetedUnitSpec<Field>
 ): TopLevelSpec {
   const completionRate =
     (books.filter((b) => b.status === 'finished').length / books.length) * 100;
+
+  const charts = [getBarSpec('tags', 'Genres', chartHeight, 'mediumpurple')];
+
   return {
     title: {
       text: `${year ?? 'All-Time'} Books`,
@@ -73,7 +77,7 @@ function getSpec(
     data: {
       values: books,
     },
-    hconcat: coverGrid ? [coverGrid] : [],
+    hconcat: coverGrid ? [coverGrid, { vconcat: charts }] : charts,
   };
 }
 
@@ -81,7 +85,7 @@ export async function generateCharts(
   books: Book[],
   year: number | undefined
 ): Promise<Buffer> {
-  let spec = getSpec(books, year);
+  let spec = getSpec(books, year, ALL_TIME_CHART_HEIGHT);
 
   if (year) {
     const layout = getBestCoverLayout(
@@ -89,9 +93,11 @@ export async function generateCharts(
       getChartsColumnWidth(books),
       CHART_HEIGHT * 2 + CHARTS_OVERHEAD
     );
+    const chartHeight = (layout.gridHeight - CHARTS_OVERHEAD) / 2;
     spec = getSpec(
       books,
       year,
+      chartHeight,
       getCoverGridSpec(
         books.map((b) => b.coverPath).filter((c) => c !== null),
         layout
